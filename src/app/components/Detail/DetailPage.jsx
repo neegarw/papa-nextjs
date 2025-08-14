@@ -55,40 +55,43 @@ export default function DetailPage({ productId, category }) {
   if (!product) return <p>Məhsul tapılmadı</p>;
 
   return (
-    <div onClick={() => router.back()} className="fixed inset-0 z-50 bg-transparent">
+    <div onClick={() => router.back()} className="fixed inset-0 z-50 bg-transparent ">
       <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }} className="absolute inset-0 z-[]"></div>
-      <div className="relative flex flex-col justify-center items-center h-[85%] md:h-screen px-4">
-        <div onClick={(e) => e.stopPropagation()} className="bg-[#f2f2f2] rounded-[35px] flex flex-col md:flex-row p-6 w-full relative h-[90%] md:w-[80%] overflow-y-auto">
-          <button
-            onClick={() => router.back()}
-            className="absolute z-50 top-4 right-4 text-2xl"
-          >
-            ×
-          </button>
+      <div className="relative flex flex-col justify-center items-center px-4 h-full overflow-auto ">
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="bg-[#f2f2f2] rounded-[35px] flex flex-col pt-3 w-full md:w-[80%] max-h-[90vh] m-auto overflow-y-auto scrollbar-hide"
+        >
+          <div className='flex flex-col md:flex-row w-full px-6'>
+            <button
+              onClick={() => router.back()}
+              className="absolute z-50 top-10 right-10 text-2xl"
+            >
+              ×
+            </button>
+            <div className="flex flex-col md:w-[20%] relative">
+              <img
+                src={product.img}
+                alt={product.title}
+                className="w-full md:w-[280px] rounded-lg"
+              />
+              <div>
+                <h2 className="text-2xl font-extrabold mb-2">{product.title}</h2>
+                <p className="text-gray-700 mb-4">{product.composition}</p>
+              </div>
+            </div>
 
-          <div className="flex flex-col md:w-[20%] relative">
-            <img
-              src={product.img}
-              alt={product.title}
-              className="w-full md:w-[280px] rounded-lg"
-            />
-            <div>
-              <h2 className="text-2xl font-extrabold mb-2">{product.title}</h2>
-              <p className="text-gray-700 mb-4">{product.composition}</p>
+            <div className="md:ml-8 md:w-[70%]">
+              {(category === 'pizza' || category === 'papadias') && (
+                <VariationSelector
+                  variations={product.variations}
+                  onChange={(variation) => setSelectedVariation(variation)}
+                />
+
+              )}
             </div>
           </div>
-
-          <div className="md:ml-8 md:w-[70%]">
-            {(category === 'pizza' || category === 'papadias') && (
-              <VariationSelector
-                variations={product.variations}
-                onChange={(variation) => setSelectedVariation(variation)}
-              />
-
-            )}
-          </div>
-
-          <div className='bg-white px-4 py-6 absolute bottom-0 right-0 w-full'>
+          <div className='bg-white px-4 py-2 relative bottom-0 right-0 w-full'>
             <div className='flex justify-end items-center '>
               <div className='flex items-center gap-2'>
                 <button
@@ -115,12 +118,11 @@ export default function DetailPage({ productId, category }) {
                   }
 
                   setQuantity(1);
-                  router.push('/menu'); 
+                  router.push('/menu');
                 }}
                 className="uppercase bg-[#CEEB0C] rounded-[30px] px-6 py-2 border border-black text-[12px] md:text-[16px]">Səbətə əlavə et→</button>
             </div>
           </div>
-
         </div>
       </div>
     </div>
