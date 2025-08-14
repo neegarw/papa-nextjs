@@ -1,33 +1,23 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { useCart } from '../../context/CartConext';
+import { FaBasketShopping } from "react-icons/fa6";
 
 function Basket() {
     const { cartItems, increment, decrement, removeFromCart } = useCart();
+    const [isMobileBasketOpen, setIsMobileBasketOpen] = useState(false);
+
     const totalPrice = cartItems.reduce((acc, item) => {
         const price = item.variation?.price || item.price || 0;
         return acc + price * item.quantity;
     }, 0);
+    const totalCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-    if (cartItems.length === 0) {
-        return (
-            <div className='hidden md:flex flex-col w-full md:w-[30%] py-6 gap-2 sticky top-[200px] self-start'>
-                <div className="border-[#999] px-4 py-3 border-[1px] rounded-[10px]">Ünvan</div>
-                <div className="border-[#999] px-4 py-3 border-[1px] rounded-[10px] flex flex-col items-center justify-center">
-                    <span className='text-[60px]'><MdOutlineShoppingCart /></span>
-                    <span>Səbətiniz boşdur</span>
-                </div>
-                <div className="border-[#999] px-4 py-3 border-[1px] rounded-[10px]">Promokodunuz varmı? Onu bura daxil edin.</div>
-                <button className="border-[#999] bg-[#f2f2f2] px-4 py-3 border-[1px] rounded-[25px]">Sifarişin təsdiqinə keçin</button>
-            </div>
-        );
-    }
-
-    return (
-        <div className='hidden md:flex flex-col w-full md:w-[30%] py-6 gap-2 sticky top-[200px] self-start'>
+    const BasketContent = () => (
+        <div className="flex flex-col gap-2 h-full py-6 w-full ">
             <div className="border-[#999] px-4 py-3 border-[1px] rounded-[10px]">Ünvan</div>
-            <div className="border-[#999] px-4 pt-3 border-[1px] rounded-[10px] flex flex-col max-h-[300px] overflow-y-auto">
+            <div className="border-[#999] px-4 pt-3 border-[1px] rounded-[10px] flex flex-col flex-grow overflow-y-auto">
                 {cartItems.map((item) => {
                     const variationKey = item.variation ? `${item.variation.type}-${item.variation.size}` : '';
                     return (
@@ -96,10 +86,61 @@ function Basket() {
                 <span>YEKUN</span>
                 <span>{totalPrice.toFixed(2)} AZN</span>
             </div>
-
-            <div className="border-[#999] px-4 py-3 border-[1px] rounded-[10px]">Promokodunuz varmı? Onu bura daxil edin.</div>
             <button className="border-[#999] bg-[#f2f2f2] px-4 py-3 border-[1px] rounded-[25px]">Sifarişin təsdiqinə keçin</button>
         </div>
+    );
+
+    const EmptyBasket = () => (
+        <div className="flex flex-col w-full py-8 gap-2">
+            <div className="border-[#999] px-4 py-3 border-[1px] rounded-[10px]">Ünvan</div>
+            <div className="border-[#999] px-4 py-3 border-[1px] rounded-[10px] flex flex-col items-center justify-center">
+                <span className='text-[60px]'><MdOutlineShoppingCart /></span>
+                <span>Səbətiniz boşdur</span>
+            </div>
+            <button className="border-[#999] bg-[#f2f2f2] px-4 py-3 border-[1px] rounded-[25px]">Sifarişin təsdiqinə keçin</button>
+        </div>
+    );
+
+    return (
+        <>
+            {/* Desktop səbət */}
+            <div className='hidden lg:flex sticky top-[200px] self-start flex-[0_0_30%]'>
+                {cartItems.length === 0 ? <EmptyBasket /> : <BasketContent />}
+            </div>
+
+            {/* Mobil alt-bar */}
+            
+                <div
+                    onClick={() => setIsMobileBasketOpen(true)}
+                    className='bg-[#2D5D2A] py-4 px-2 flex lg:hidden fixed bottom-0 left-0 w-full justify-between items-center cursor-pointer z-50'
+                >
+                    <div className='flex items-center gap-2'>
+                        <FaBasketShopping className='text-white text-[30px]' />
+                        <span className='text-white font-extrabold text-[20px]'>({totalCount})</span>
+                    </div>
+                    <div className='text-[20px] text-white font-extrabold'>
+                        {totalPrice.toFixed(2)} AZN
+                    </div>
+                </div>
+
+            {/* Tam ekran mobil səbət */}
+            <div
+                className={`fixed top-0 right-0 h-full w-full bg-white z-50 transform transition-transform duration-300 ease-in-out ${
+                    isMobileBasketOpen ? 'translate-x-0' : 'translate-x-full'
+                }`}
+            >
+                {/* Header */}
+                <div className="flex justify-between items-center p-4 border-b border-gray-300">
+                    <h2 className="font-bold text-lg">Səbət</h2>
+                    <button onClick={() => setIsMobileBasketOpen(false)}>✕</button>
+                </div>
+
+                {/* Məzmun */}
+                <div className="p-4 overflow-y-auto h-[calc(100%-60px)]">
+                    {cartItems.length === 0 ? <EmptyBasket /> : <BasketContent />}
+                </div>
+            </div>
+        </>
     );
 }
 

@@ -7,17 +7,17 @@ import VariationSelector from './VariationSelector';
 import { useCart } from '../../context/CartConext';
 
 export default function DetailPage({ productId, category }) {
+  const { addToCart } = useCart();
   const router = useRouter();
-  const { cartItems, increment, decrement, addToCart } = useCart();
-
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedVariation, setSelectedVariation] = useState(() => product?.variations?.[0] || null);
+  const [selectedVariation, setSelectedVariation] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
-  const cartItem = cartItems.find(item =>
-    String(item.id) === String(productId) &&
-    JSON.stringify(item.variation) === JSON.stringify(selectedVariation)
-  );
+  const finalPrice =
+    category === 'pizza'
+      ? Number(selectedVariation?.price) || 0
+      : Number(product?.price) || 0;
 
   useEffect(() => {
     async function fetchProduct() {
@@ -38,6 +38,9 @@ export default function DetailPage({ productId, category }) {
 
         const foundProduct = products.find(p => String(p.id) === String(productId));
         setProduct(foundProduct || null);
+        if (foundProduct?.variations?.length) {
+          setSelectedVariation(foundProduct.variations[0]);
+        }
       } catch (error) {
         console.error('Məhsul yüklənmədi:', error);
         setProduct(null);
@@ -47,41 +50,6 @@ export default function DetailPage({ productId, category }) {
     }
     fetchProduct();
   }, [productId, category]);
-
-  useEffect(() => {
-    if (product?.variations?.length) {
-      setSelectedVariation(product.variations[0]);
-    }
-  }, [product]);
-
-const [count, setCount] = useState(2);
-
-useEffect(() => {
-  if (cartItem) {
-    setCount(cartItem.quantity);
-  } else {
-    setCount(1);
-  }
-}, [cartItem]);
-
-
-  const handleAddToCart = async () => {
-    if (!cartItem && product) {
-      await addToCart({ ...product, variation: selectedVariation, quantity: count });
-    }
-    router.push('/menu');
-  };
-
-  function incDec(x) {
-  if (cartItem) {
-    if (x > 0) increment(productId, selectedVariation);
-    else if (count > 1) decrement(productId, selectedVariation);
-  } else {
-    if (x > 0 && product) addToCart({ ...product, variation: selectedVariation, quantity: 1 });
-
-  }
-}
-
 
   if (loading) return <p>Yüklənir...</p>;
   if (!product) return <p>Məhsul tapılmadı</p>;
@@ -116,25 +84,43 @@ useEffect(() => {
                 variations={product.variations}
                 onChange={(variation) => setSelectedVariation(variation)}
               />
+
             )}
           </div>
+
           <div className='bg-white px-4 py-6 absolute bottom-0 right-0 w-full'>
             <div className='flex justify-end items-center '>
               <div className='flex items-center gap-2'>
                 <button
-                  onClick={() => incDec(-1)}
-                  className='w-[30px] h-[30px] bg-white border border-[#2D5D2A] rounded-full text-[#2D5D2A] hover:bg-[#2D5D2A] hover:text-white transition ease-in-out duration-200 cursor-pointer' > -</button>
-                <span className='text-[#2D5D2A] font-extrabold'>{count}</span>
+                  onClick={() => setQuantity(prev => Math.max(prev - 1, 1))}
+                  className='w-[30px] h-[30px] bg-white border border-[#2D5D2A] rounded-full text-[#2D5D2A]'>-</button>
+                <span className='text-[#2D5D2A] font-extrabold'>{quantity}</span>
                 <button
-                  onClick={() => incDec(1)}
-                  className='w-[30px] h-[30px] bg-white border border-[#2D5D2A] rounded-full text-[#2D5D2A] hover:bg-[#2D5D2A] hover:text-white transition ease-in-out duration-200 cursor-pointer' > +</button>
+                  onClick={() => setQuantity(prev => prev + 1)}
+                  className='w-[30px] h-[30px] bg-white border border-[#2D5D2A] rounded-full text-[#2D5D2A]'>+</button>
               </div>
-              <span className='text-[#2D5D2A] font-extrabold mx-3'>  {((selectedVariation?.price || product.price) * count).toFixed(2)} AZN</span>
+              <span className='text-[#2D5D2A] font-extrabold mx-3'>
+                {(finalPrice * quantity).toFixed(2)} AZN
+              </span>
               <button
-                onClick={handleAddToCart}
-                className="uppercase bg-[#CEEB0C] rounded-[30px] px-6 py-2 border border-black text-[12px] md:text-[16px] hover:bg-white transition-all ease-in-out duration-500 cursor-pointer">Səbətə əlavə et→</button>
+                onClick={() => {
+                  if (category === 'pizza') {
+                    if (!selectedVariation) {
+                      alert('Zəhmət olmasa məhsulun variantını seçin!');
+                      return;
+                    }
+                    addToCart(product, quantity, selectedVariation);
+                  } else {
+                    addToCart(product, quantity);
+                  }
+
+                  setQuantity(1);
+                  router.push('/menu'); 
+                }}
+                className="uppercase bg-[#CEEB0C] rounded-[30px] px-6 py-2 border border-black text-[12px] md:text-[16px]">Səbətə əlavə et→</button>
             </div>
           </div>
+
         </div>
       </div>
     </div>

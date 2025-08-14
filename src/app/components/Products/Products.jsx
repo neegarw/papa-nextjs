@@ -11,14 +11,13 @@ import {
   getSalat,
   getSouses
 } from '../../../../services/api';
-import { MdOutlineShoppingCart } from "react-icons/md";
 import Card from '../Card/Card';
 
 function Products() {
   const [data, setData] = useState({
     papadias: [],
     pizza: [],
-    qalyanalti: [],
+    qalyanaltilar: [],
     salat: [],
     pasta: [],
     souses: [],
@@ -34,7 +33,7 @@ function Products() {
         const [
           papadias,
           pizza,
-          qalyanalti,
+          qalyanaltilar,
           salat,
           pasta,
           souses,
@@ -54,7 +53,7 @@ function Products() {
         setData({
           papadias,
           pizza,
-          qalyanalti,
+          qalyanaltilar,
           salat,
           pasta,
           souses,
@@ -74,23 +73,26 @@ function Products() {
   if (loading) return <p className='text-center py-10'>Yüklənir...</p>;
 
   return (
-    <div className='container mx-auto px-3 pt-[150px] md:pt-[200px]'>
-      <div className='flex justify-between relative gap-4'>
-        <div className="w-full md:w-[65%]">
-          {Object.entries(data).map(([key, value]) => (
-            <section key={key}>
-              <h2 className='text-[24px] md:text-[30px] font-extrabold py-4 capitalize'>{key}</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {value.map(item => (
-                  <Card key={item.id} {...item} />
-                ))}
-              </div>
-            </section>
-          ))}
+    <>
+      <div className='container mx-auto px-3 pt-[150px] md:pt-[200px]'>
+        <div className='flex justify-between relative gap-4'>
+          <div className="w-full lg:w-[65%]">
+            {Object.entries(data).map(([key, value]) => (
+              <section key={key} id={key} className="scroll-mt-[180px]">
+                <h2 className='text-[24px] md:text-[30px] font-extrabold py-4 capitalize'>{key}</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                  {value.map(item => (
+                    <Card key={item.id} {...item} />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+          <Basket />
         </div>
-        <Basket />
       </div>
-    </div>
+    </>
+
   );
 }
 

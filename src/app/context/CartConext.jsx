@@ -17,62 +17,60 @@ export function CartProvider({ children }) {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (product) => {
-    setCartItems((prev) => {
-      const existingIndex = prev.findIndex(
-        (item) =>
-          item.id === product.id &&
-          item.variation?.type === product.variation?.type &&
-          item.variation?.size === product.variation?.size
-      );
+  const addToCart = (product, quantity, variation) => {
+    // 🔹 unikal açar: id + variation.id və ya variation.name
+    const variationKey = variation
+      ? `${product.id}-${variation.name || variation.id}`
+      : `${product.id}`;
 
-      if (existingIndex > -1) {
-        const updatedCart = [...prev];
-        updatedCart[existingIndex] = {
-          ...updatedCart[existingIndex],
-          quantity: updatedCart[existingIndex].quantity + 1,
-          price: product.price,
-          variation: {
-            ...product.variation,
-            price: product.variation?.price || product.price,
+    setCartItems((prevCart) => {
+      const existing = prevCart.find((item) => item.key === variationKey);
+
+      if (existing) {
+        return prevCart.map((item) =>
+          item.key === variationKey
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        return [
+          ...prevCart,
+          {
+            ...product,
+            quantity,
+            variation,
+            key: variationKey, // unikal açar
           },
-        };
-        return updatedCart;
+        ];
       }
-
-      return [...prev, { ...product, quantity: 1 }];
     });
   };
 
   const removeFromCart = (id, variation) => {
-    setCartItems((prev) =>
-      prev.filter(
-        (item) =>
-          !(item.id === id &&
-            item.variation?.type === variation?.type &&
-            item.variation?.size === variation?.size)
-      )
-    );
+    const variationKey = variation
+      ? `${id}-${variation.name || variation.id}`
+      : `${id}`;
+    setCartItems((prev) => prev.filter((item) => item.key !== variationKey));
   };
 
   const updateQuantity = (id, variation, quantity) => {
+    const variationKey = variation
+      ? `${id}-${variation.name || variation.id}`
+      : `${id}`;
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id &&
-          item.variation?.type === variation?.type &&
-          item.variation?.size === variation?.size
-          ? { ...item, quantity }
-          : item
+        item.key === variationKey ? { ...item, quantity } : item
       )
     );
   };
 
   function increment(id, variation) {
+    const variationKey = variation
+      ? `${id}-${variation.name || variation.id}`
+      : `${id}`;
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id &&
-          item.variation?.type === variation?.type &&
-          item.variation?.size === variation?.size
+        item.key === variationKey
           ? { ...item, quantity: item.quantity + 1 }
           : item
       )
@@ -80,12 +78,13 @@ export function CartProvider({ children }) {
   }
 
   function decrement(id, variation) {
+    const variationKey = variation
+      ? `${id}-${variation.name || variation.id}`
+      : `${id}`;
     setCartItems((prev) =>
       prev
         .map((item) =>
-          item.id === id &&
-            item.variation?.type === variation?.type &&
-            item.variation?.size === variation?.size
+          item.key === variationKey
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )

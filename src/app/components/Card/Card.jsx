@@ -15,7 +15,7 @@ function Card({ title, img, price, id, category }) {
         <div className='relative'>
           <img src={img} alt={title} className="w-full h-[150px] object-cover rounded-lg mb-4" />
         </div>
-        <h4 className="text-[16px] font-extrabold text-[#16113B] text-left px-3">{title}</h4>
+        <h4 className="text-[13px] lg:text-[16px] font-bold lg:font-extrabold text-[#16113B] text-left px-3">{title}</h4>
         <h6 className="text-[#000000] text-[14px] text-left px-3">
           {parseFloat(price).toFixed(2)} ₼
         </h6>

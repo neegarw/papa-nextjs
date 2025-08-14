@@ -6,14 +6,14 @@ export default function VariationSelector({ variations, onChange }) {
   const [showAllSizes, setShowAllSizes] = useState(false);
 
   useEffect(() => {
-  if (variations?.length > 0) {
-    const filtered = variations.filter((v) => v.type === selectedType);
-    if (filtered.length > 0 && !selectedSize) { // yalnız seçilməyibsə
-      setSelectedSize(filtered[0]);
-      onChange && onChange({ type: selectedType, ...filtered[0] });
+    if (variations?.length > 0) {
+      const filtered = variations.filter((v) => v.type === selectedType);
+      if (filtered.length > 0 && !selectedSize) { // yalnız seçilməyibsə
+        setSelectedSize(filtered[0]);
+        onChange && onChange({ type: selectedType, ...filtered[0] });
+      }
     }
-  }
-}, [selectedType, variations]);
+  }, [selectedType, variations]);
 
   const handleTypeSelect = (type) => {
     setSelectedType(type);
@@ -21,9 +21,12 @@ export default function VariationSelector({ variations, onChange }) {
   };
 
   const handleSizeSelect = (sizeVariation) => {
+    // Unikal açar üçün "name" sahəsi əlavə olunur
+    const variationData = { ...sizeVariation, type: selectedType, name: sizeVariation.size };
     setSelectedSize(sizeVariation);
-    onChange && onChange({ type: selectedType, ...sizeVariation });
+    onChange && onChange(variationData);
   };
+
 
   return (
     <div className="py-4 space-y-6">
@@ -36,9 +39,8 @@ export default function VariationSelector({ variations, onChange }) {
             <button
               key={type}
               onClick={() => handleTypeSelect(type)}
-              className={`pl-2 pr-6 py-1 border rounded-lg text-left  ${
-                selectedType === type ? 'bg-[#2D5D2A] text-white' : 'bg-transparent text-gray-500'
-              }`}
+              className={`pl-2 pr-6 py-1 border rounded-lg text-left  ${selectedType === type ? 'bg-[#2D5D2A] text-white' : 'bg-transparent text-gray-500'
+                }`}
             >
               {type}
             </button>
@@ -71,15 +73,13 @@ export default function VariationSelector({ variations, onChange }) {
                   <button
                     key={v.size}
                     onClick={() => handleSizeSelect(v)}
-                    className={`border-[1px] border-gray-500 p-3 w-[200px] rounded ${
-                      selectedSize?.size === v.size ? 'bg-[#2D5D2A] text-white' : ''
-                    }`}
+                    className={`border-[1px] border-gray-500 p-3 w-[200px] rounded ${selectedSize?.size === v.size ? 'bg-[#2D5D2A] text-white' : ''
+                      }`}
                   >
                     <p>{v.size?.slice(0, -8)}</p>
                     <p
-                      className={`text-sm text-gray-500 ${
-                        selectedSize?.size === v.size ? 'text-white' : ''
-                      }`}
+                      className={`text-sm text-gray-500 ${selectedSize?.size === v.size ? 'text-white' : ''
+                        }`}
                     >
                       {v.price} AZN
                     </p>

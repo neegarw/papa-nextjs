@@ -15,7 +15,21 @@ function Categories() {
                 <div className='top-[-10px] container mx-auto text-[14px] md:text-[16px] capitalize flex gap-5 md:justify-between overflow-x-auto hide-scrollbar px-3 '>
                     {
                         data.map(item => (
-                            <div key={item.id}>{item.category}</div>
+                            <div
+                                key={item.id}
+                                onClick={() => {
+                                    const section = document.getElementById(item.category.toLowerCase());
+                                    if (section) {
+                                        const yOffset = -180; 
+                                        const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                        window.scrollTo({ top: y, behavior: 'smooth' });
+                                    }
+                                }}
+
+                                className="cursor-pointer hover:bg-gray-100 rounded-[20px] px-4 py-1 transition-all ease-in-out duration-200 "
+                            >
+                                {item.category}
+                            </div>
                         ))
                     }
                 </div>
