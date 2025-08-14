@@ -57,11 +57,11 @@ export default function DetailPage({ productId, category }) {
   return (
     <div onClick={() => router.back()} className="fixed inset-0 z-50 bg-transparent">
       <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }} className="absolute inset-0 z-[]"></div>
-      <div className="relative flex flex-col justify-center items-center h-screen px-4">
+      <div className="relative flex flex-col justify-center items-center h-[85%] md:h-screen px-4">
         <div onClick={(e) => e.stopPropagation()} className="bg-[#f2f2f2] rounded-[35px] flex flex-col md:flex-row p-6 w-full relative h-[90%] md:w-[80%] overflow-y-auto">
           <button
             onClick={() => router.back()}
-            className="absolute top-4 right-4 text-2xl"
+            className="absolute z-50 top-4 right-4 text-2xl"
           >
             ×
           </button>

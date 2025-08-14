@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { useCart } from '../../context/CartConext';
 import { FaBasketShopping } from "react-icons/fa6";
+import { IoArrowUndoSharp } from "react-icons/io5";
+
 
 function Basket() {
     const { cartItems, increment, decrement, removeFromCart } = useCart();
@@ -129,13 +131,10 @@ function Basket() {
                     isMobileBasketOpen ? 'translate-x-0' : 'translate-x-full'
                 }`}
             >
-                {/* Header */}
-                <div className="flex justify-between items-center p-4 border-b border-gray-300">
-                    <h2 className="font-bold text-lg">Səbət</h2>
-                    <button onClick={() => setIsMobileBasketOpen(false)}>✕</button>
+                <div className="flex justify-between items-center text-[#2D5D2A] p-4 border-b border-gray-300">
+                    <h2 onClick={() => setIsMobileBasketOpen(false)} className="font-bold text-lg"><IoArrowUndoSharp /></h2>
                 </div>
 
-                {/* Məzmun */}
                 <div className="p-4 overflow-y-auto h-[calc(100%-60px)]">
                     {cartItems.length === 0 ? <EmptyBasket /> : <BasketContent />}
                 </div>

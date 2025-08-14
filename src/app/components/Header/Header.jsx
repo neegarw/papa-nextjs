@@ -11,7 +11,7 @@ export default function Header() {
 
   return (
     <>
-      <header className={`w-full bg-white z-30 fixed transition-all duration-300 ${menuOpen ? '' : 'shadow-md'}`}>
+      <header className={`w-full bg-white z-40 fixed transition-all duration-300 ${menuOpen ? '' : 'shadow-md'}`}>
         <div className="container mx-auto flex justify-between items-center px-4">
           <Link href='/' className="w-[150px] cursor-pointer">
             <img
@@ -51,7 +51,7 @@ export default function Header() {
         </div>
       </header>
       <div
-        className={`fixed top-0 left-0 w-full bg-white border border-gray-100 z-10 transition-all duration-500 ease-in-out ${menuOpen ? 'max-h-screen pt-[100px] pb-3 bg-white ' : 'max-h-0 overflow-hidden'
+        className={`fixed top-0 left-0 w-full bg-white border border-gray-100 z-30 transition-all duration-500 ease-in-out ${menuOpen ? 'max-h-screen pt-[150px] pb-3 bg-white ' : 'max-h-0 overflow-hidden'
           }`}
       >
         <ul className="flex bg-white container mx-auto flex-col items-start space-y-1 text-[#000] text-lg px-4">
